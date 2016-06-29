@@ -21,6 +21,7 @@ $$ LANGUAGE plpgsql;
 
 COPY ( 
     SELECT
+        u.id as "Moodle user id",
         get_employee_param(u.id, 'employeeid') as "Employee ID",
         u.firstname || ' ' || u.lastname as "Name",
         get_employee_param(u.id, 'employeestatus') as "Employee Status",
@@ -31,8 +32,8 @@ COPY (
         get_employee_param(u.id, 'zipcode') as "Cost Centre",
         get_employee_param(u.id, 'a') as "Active Employee",
         get_employee_param(u.id, 'e') as "Enabled in the system",
-        to_timestamp(get_employee_param(u.id, 'startdate')::bigint) as "Start Date",
-        to_timestamp(get_employee_param(u.id, 'enddate')::bigint) as "End Date",
+        to_timestamp(get_employee_param(u.id, 'startdate')::bigint)::timestamp as "Start Date",
+        to_timestamp(get_employee_param(u.id, 'enddate')::bigint)::timestamp as "End Date",
         get_employee_param(u.id, 'emailaddress') as "Email Address",
         get_employee_param(u.id, 'domaincode') as "Domain Code",
         get_employee_param(u.id, 'organisationcode') as " Organisation Code",
@@ -40,8 +41,8 @@ COPY (
         get_employee_param(u.id, 'usersource') as "User Source",
         get_employee_param(u.id, 'zone') as "Zone",
         get_employee_param(u.id, 'employeetype') as "Employee Type"
-    FROM
-        mdl_user u;
+    FROM mdl_user u
+    WHERE deleted = 0
 ) TO '/home/suankan/employees.csv' 
        (FORMAT CSV, DELIMITER ',', FORCE_QUOTE *, HEADER);
 
